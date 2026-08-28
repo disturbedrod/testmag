@@ -1,0 +1,91 @@
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #111;
+  font-family: sans-serif;
+}
+
+/* ── Viewport shell ── */
+#magazine-shell {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ── Page track: absolutely positions each page in its own 100vw slot ── */
+#page-track {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+  will-change: transform;
+}
+
+/* ── Each page occupies exactly one viewport-width slot, centred ── */
+.page-slot {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+/* ── Individual page ── */
+.magazine-page {
+  position: relative;
+  flex: none;
+  background: #fff;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+/* ── Page items ── */
+.page-item { box-sizing: border-box; }
+.page-item[data-anim] { opacity: 0; }
+
+/* ── Arrow buttons ── */
+.nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.4);
+  color: #fff;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, opacity 0.2s;
+  user-select: none;
+}
+.nav-arrow:hover { background: rgba(255,255,255,0.3); }
+.nav-arrow.hidden { opacity: 0; pointer-events: none; }
+#arrow-prev { left: 16px; }
+#arrow-next { right: 16px; }
+
+/* ── Page counter ── */
+#page-counter {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes anim-item-281 {
+  0% { opacity: 0; transform: rotate(0deg) scale(1, 1); }
+  47% { opacity: 1; transform: rotate(0deg) scale(1, 1); }
+  100% { opacity: 1; transform: rotate(0deg) scale(1, 1); }
+}
