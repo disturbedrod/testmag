@@ -11,14 +11,14 @@
 
   // ── Scale each page to fit inside the viewport ──
   function scaleAll() {
-    pages.forEach(page => {
-      const vw = window.innerWidth  - 120; // leave room for arrows
+    document.querySelectorAll(".page-clip").forEach(clip => {
+      const vw = window.innerWidth  - 120;
       const vh = window.innerHeight -  40;
-      const pw = parseFloat(page.style.width);
-      const ph = parseFloat(page.style.height);
+      const pw = parseFloat(clip.style.width);
+      const ph = parseFloat(clip.style.height);
       const scale = Math.min(vw / pw, vh / ph, 1);
-      page.style.transform = "scale(" + scale + ")";
-      page.style.transformOrigin = "center center";
+      clip.style.transform = "scale(" + scale + ")";
+      clip.style.transformOrigin = "center center";
     });
   }
 

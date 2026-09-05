@@ -35,18 +35,83 @@ html, body {
   flex: none;
 }
 
-/* ── Individual page ── */
+/* ── Clip wrapper: enforces page bounds, hides bleed ── */
+.page-clip {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  flex: none;
+}
+
+/* ── Individual page: overflow visible so bleed items render correctly ── */
 .magazine-page {
   position: relative;
   flex: none;
   background: #fff;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* ── Page items ── */
 .page-item { box-sizing: border-box; }
 .page-item[data-anim] { opacity: 0; }
+
+/* ── Multi-line text frames: baseline-accurate line stacking ──
+   Each line after the first is a box whose height is that line's InDesign
+   leading, with the type sitting on the box's bottom edge. text-box-trim
+   redefines that bottom edge as the alphabetic baseline, so stacking the
+   boxes reproduces InDesign's baseline-to-baseline spacing exactly, whatever
+   mix of type sizes the lines contain. Type taller than its leading spills
+   upward out of the box — which is what InDesign does too. */
+.tf-line { flex: none; }
+
+.tf-line-first {
+  /* Top edge left alone, so the first baseline lands where normal CSS flow
+     would put it and existing frames don't shift. Bottom trimmed to the
+     baseline the next line's box is measured from. */
+  text-box-trim: trim-end;
+  text-box-edge: text alphabetic;
+}
+
+.tf-line:not(.tf-line-first) {
+  /* Box is at least one leading tall and the ink sits on its bottom edge.
+     Type taller than its leading spills upward (as InDesign does); a
+     paragraph that wraps grows the box downward instead. */
+  display: flex;
+  align-items: flex-end;
+  overflow: visible;
+}
+
+.tf-ink {
+  /* line-height comes from the line's own leading, set inline, so that a
+     paragraph which soft-wraps spaces its wrapped lines correctly. */
+  width: 100%;
+  text-box-trim: trim-end;
+  text-box-edge: text alphabetic;
+}
+
+/* ── Text wrap ──
+   .tf-flow is the block the floats and the copy share, so the floats intrude
+   on the copy's line boxes. It is a flex item, hence the explicit width.
+   .tf-wrap is an empty spacer: it paints nothing, and shape-outside (set
+   inline, per obstacle) is what actually excludes the text. */
+.tf-flow { width: 100%; }
+
+.tf-wrap {
+  shape-margin: 0;
+  pointer-events: none;
+}
+
+.tf-para { width: 100%; }
+
+/* Engines without text-box-trim (check caniuse before dropping this): fake the
+   trim with a negative margin derived from nominal sans metrics — ascent
+   .928em, descent .244em, so the baseline sits .342em above the untrimmed
+   bottom of a line box of height lh. A couple of px off on fonts with
+   unusual metrics, but far closer than leaving the boxes untrimmed. */
+@supports not (text-box-trim: trim-end) {
+  .tf-line-first { margin-bottom: calc(0.342em - var(--tf-lead, 1em) / 2); }
+  .tf-ink { margin-bottom: -0.158em; }
+}
 
 /* ── Arrow buttons ── */
 .nav-arrow {
@@ -84,8 +149,3 @@ html, body {
   z-index: 100;
 }
 
-@keyframes anim-item-281 {
-  0% { opacity: 0; transform: rotate(0deg) scale(1, 1); }
-  47% { opacity: 1; transform: rotate(0deg) scale(1, 1); }
-  100% { opacity: 1; transform: rotate(0deg) scale(1, 1); }
-}
